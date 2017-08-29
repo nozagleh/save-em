@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "104218482409",
+    "firebase_url": "https://lostinmex-31d91.firebaseio.com",
+    "project_id": "lostinmex-31d91",
+    "storage_bucket": "lostinmex-31d91.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:104218482409:android:81d4ba95a849bd81",
+        "android_client_info": {
+          "package_name": "com.nozagleh.captainmexico"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "104218482409-770md0q587g34pf71bnabgh20im56cna.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nozagleh.captainmexico",
+            "certificate_hash": "aee97a5b07715980e2eb6d1a91eff08f0d1a4c24"
+          }
+        },
+        {
+          "client_id": "104218482409-jd4phutfscl8smdvaeua88flqa83bkpf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5dpvqe_HvhR31gBu9pa6oDzh5-zFLCps"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "104218482409-jd4phutfscl8smdvaeua88flqa83bkpf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
