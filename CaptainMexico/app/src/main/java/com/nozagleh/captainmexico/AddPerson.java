@@ -32,22 +32,10 @@ public class AddPerson extends AppCompatActivity {
 
     // Input fields and buttons
     private ImageButton imageButton;
-    private TextView lblName;
-    private EditText txtName;
-    private TextView lblEyeColor;
-    private EditText txtEyeColor;
-    private TextView lblShoeSize;
-    private EditText txtShoeSize;
-    private TextView lblSex;
     private Spinner spinnerSex;
-    private TextView lblHeight;
-    private EditText txtHeight;
-    private TextView lblHairColor;
-    private EditText txtHairColor;
-    /** Add more **/
     private Button btnSubmit;
-
-    View view;
+    private EditText txtName, txtEyeColor, txtShoeSize,
+            txtHeight, txtHairColor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,8 +132,10 @@ public class AddPerson extends AppCompatActivity {
             // Get the current location
             String loc = "";
             Location location = gps.getLocation();
-            loc = String.valueOf(location.getLatitude());
-            loc += "," + String.valueOf(location.getLongitude());
+            if (location != null) {
+                loc = String.valueOf(location.getLatitude());
+                loc += "," + String.valueOf(location.getLongitude());
+            }
 
             Log.d(TAG, loc);
 
@@ -165,9 +155,14 @@ public class AddPerson extends AppCompatActivity {
         }
     }
 
+    /**
+     * End the activity on insert
+     */
     public void endCurrentActivity() {
+        // Disable the add button
         btnSubmit.setEnabled(false);
 
+        // Create a snackbar letting the user know of the insert
         Snackbar snackbar = Snackbar.make(this.findViewById(android.R.id.content), R.string.hint_person_added,Snackbar.LENGTH_LONG);
         snackbar.addCallback(new Snackbar.Callback() {
             @Override
@@ -178,21 +173,30 @@ public class AddPerson extends AppCompatActivity {
             @Override
             public void onDismissed(Snackbar transientBottomBar, int event) {
                 super.onDismissed(transientBottomBar, event);
-
+                // Finish the current activity on snackbar dismiss
                 finish();
             }
         });
+
+        // Show the snackbar
         snackbar.show();
     }
 
+    /**
+     * Show GPS permission denied snackbar
+     */
     public void gpsSnackBar() {
+        // Create a snackbar for the messabe
         Snackbar snackbar = Snackbar.make(this.findViewById(android.R.id.content), R.string.hint_gps_deny,Snackbar.LENGTH_LONG);
         snackbar.setAction("Grant", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Run function on Grant click
                 pm.gpsPermission(AddPerson.this);
             }
         });
+
+        // Show the snackbar
         snackbar.show();
     }
 
@@ -200,10 +204,14 @@ public class AddPerson extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        // Get the request code when gallery is closed
         switch (requestCode) {
             case 1:
+                // Check if the results are fine
                 if(resultCode == RESULT_OK){
+                    // Get the image
                     Uri selectedImage = data.getData();
+                    // Set the image button's image to the image
                     imageButton.setImageURI(selectedImage);
                 }
         }
@@ -212,6 +220,7 @@ public class AddPerson extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
+        // Get results on permissions
         switch (requestCode) {
             case PermissionManager.GPS_REQUEST_CODE: {
                 // If request is cancelled, the result arrays are empty.
@@ -238,6 +247,7 @@ public class AddPerson extends AppCompatActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
+        // Finish the activity on back press from ActionBar
         finish();
         return super.onSupportNavigateUp();
     }

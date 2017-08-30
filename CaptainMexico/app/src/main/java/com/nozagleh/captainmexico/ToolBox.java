@@ -1,6 +1,9 @@
 package com.nozagleh.captainmexico;
 
+import android.app.Activity;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.view.View;
 
 import java.util.UUID;
 
@@ -14,9 +17,4 @@ public class ToolBox {
         return UUID.randomUUID().toString();
     }
 
-    // TODO add snackbar generator
-    /*public static Snackbar generateSnackBar() {
-
-        return;
-    }*/
 }
