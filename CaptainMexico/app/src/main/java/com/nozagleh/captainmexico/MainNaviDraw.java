@@ -55,6 +55,10 @@ public class MainNaviDraw extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        // Start the tracking
+        GPSManager gps = new GPSManager(this);
+        gps.startLocationTracking();
     }
 
     @Override
@@ -118,13 +122,13 @@ public class MainNaviDraw extends AppCompatActivity
                 }
             });*/
 
-            Person person = new Person("1", "John Ham");
+            /*Person person = new Person("1", "John Ham");
             person.setEyeColor("Blue");
             person.setHairColor("Black");
             person.setHeight(1.23);
             person.setGender("Male");
             person.setShoeSize(6.0);
-            FirebaseManager fm = new FirebaseManager();
+            FirebaseManager fm = new FirebaseManager();*/
             //fm.addNewPerson(person);
         } else if (id == R.id.nav_gallery) {
             Intent add = new Intent(MainNaviDraw.this, AddPerson.class);

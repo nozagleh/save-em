@@ -3,12 +3,15 @@ package com.nozagleh.captainmexico;
 import android.*;
 import android.Manifest;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.icu.util.Calendar;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.preference.Preference;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import java.sql.Time;
@@ -49,8 +52,7 @@ public class GPSManager {
 
     }
 
-    public Double[] getLocation() {
-        Double[] location = new Double[]{};
+    public void startLocationTracking() {
 
         // Get the permission
         hasPerm = pm.checkPermission(
@@ -60,22 +62,24 @@ public class GPSManager {
 
         // Check if the needed permission for the GPS has been granted
         if (hasPerm == PackageManager.PERMISSION_GRANTED) {
-            // Check if the location is not null and that it is newly fetched
-            if (loc == null || loc.getTime() < java.util.Calendar.getInstance().getTimeInMillis() - 2 * 60 * 1000) {
-                // Request location updates
-                lm.requestLocationUpdates(
-                        LocationManager.GPS_PROVIDER, 5000, 10, ll);
-                loc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            }
-
-            location = new Double[]{loc.getLongitude(), loc.getLatitude()};
-
-        } else {
-            // TODO ask for permission for GPS
+            // Request location updates
+            lm.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER, 0, 5, ll);
         }
+    }
 
-        lm.removeUpdates(ll);
-        return location;
+    public Location getLocation() {
+        // Get the permission
+        hasPerm = pm.checkPermission(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                context.getPackageName()
+        );
+
+        // Check if the needed permission for the GPS has been granted
+        if (hasPerm == PackageManager.PERMISSION_GRANTED) {
+            return lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        }
+        return new Location(LocationManager.GPS_PROVIDER);
     }
 }
 
@@ -83,9 +87,11 @@ class CustomLocationListener implements LocationListener {
 
     private final String TAG = "CustomLocationListener";
 
+    private Location location;
+
     @Override
     public void onLocationChanged(Location location) {
-        //Log.d(TAG, location.getLatitude() + " : " + location.getLongitude());
+        this.location = location;
     }
 
     @Override
@@ -101,5 +107,9 @@ class CustomLocationListener implements LocationListener {
     @Override
     public void onProviderDisabled(String s) {
 
+    }
+
+    public Location getLocation() {
+        return this.location;
     }
 }

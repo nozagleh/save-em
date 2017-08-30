@@ -16,6 +16,9 @@ public class Person {
     private String eyeColor;
     private Double shoeSize;
     private String picUrl;
+    private String extraFeatures;
+    private String gpsLocation;
+    private String dateAdded;
 
     /**
      * Empty default class constructor
@@ -95,5 +98,29 @@ public class Person {
 
     public void setPicUrl(String picUrl) {
         this.picUrl = picUrl;
+    }
+
+    public String getExtraFeatures() {
+        return extraFeatures;
+    }
+
+    public void setExtraFeatures(String extraFeatures) {
+        this.extraFeatures = extraFeatures;
+    }
+
+    public String getGpsLocation() {
+        return gpsLocation;
+    }
+
+    public void setGpsLocation(String gpsLocation) {
+        this.gpsLocation = gpsLocation;
+    }
+
+    public String getDateAdded() {
+        return dateAdded;
+    }
+
+    public void setDateAdded(String dateAdded) {
+        this.dateAdded = dateAdded;
     }
 }
