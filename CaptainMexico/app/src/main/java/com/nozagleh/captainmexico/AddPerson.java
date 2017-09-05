@@ -21,6 +21,8 @@ import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
+import com.nozagleh.captainmexico.ToolBox;
+
 public class AddPerson extends AppCompatActivity {
 
     private final String TAG = "AddPerson";
@@ -37,6 +39,10 @@ public class AddPerson extends AppCompatActivity {
     private EditText txtName, txtEyeColor, txtShoeSize,
             txtHeight, txtHairColor;
 
+    private FirebaseManager fbm;
+
+    Uri imageUri;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +53,9 @@ public class AddPerson extends AppCompatActivity {
         // Show action bar to go back a step
         if (actionBar != null)
             actionBar.setDisplayHomeAsUpEnabled(true);
+
+        // Get the app global firebase manager
+        fbm = ToolBox.firebaseManager;
 
         // Set new Permission manager
         pm = new PermissionManager();
@@ -137,16 +146,17 @@ public class AddPerson extends AppCompatActivity {
                 loc += "," + String.valueOf(location.getLongitude());
             }
 
+            Log.d(TAG, "blarhe");
             Log.d(TAG, loc);
 
             // Set the persons location
             if ( loc.length() > 0 )
                 person.setGpsLocation(loc);
 
-            // Init the FirebaseManager to send the data to the server
-            FirebaseManager fm = new FirebaseManager();
+            fbm.addPersonsImage(imageUri, person);
+
             // Add the new person
-            fm.addNewPerson(person);
+            fbm.addNewPerson(person);
 
             // On success, call function to end the activity
             endCurrentActivity();
@@ -213,6 +223,8 @@ public class AddPerson extends AppCompatActivity {
                     Uri selectedImage = data.getData();
                     // Set the image button's image to the image
                     imageButton.setImageURI(selectedImage);
+
+                    imageUri = selectedImage;
                 }
         }
     }

@@ -29,6 +29,8 @@ public class MainNaviDraw extends AppCompatActivity
 
     protected final String TAG = "MainNaviDraw";
 
+    protected final String SELECTED_FRAG = "SELECTED_FRAG";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,36 +104,12 @@ public class MainNaviDraw extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
-            // Handle the camera action
-            // Write a message to the database
-            //FirebaseDatabase database = FirebaseDatabase.getInstance();
-            //DatabaseReference myRef = database.getReference("person");
-            //myRef.setValue("Hello, World!");
-
-            /*myRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    String value = dataSnapshot.getValue(String.class);
-                    HashMap<String, Object> map = dataSnapshot.getValue(HashMap.class);
-                    Log.d(TAG, "Value is: " + value);
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    Log.w(TAG, "Failed to read value.", databaseError.toException());
-                }
-            });*/
-
-            /*Person person = new Person("1", "John Ham");
-            person.setEyeColor("Blue");
-            person.setHairColor("Black");
-            person.setHeight(1.23);
-            person.setGender("Male");
-            person.setShoeSize(6.0);
-            FirebaseManager fm = new FirebaseManager();*/
-            //fm.addNewPerson(person);
+            Intent presentMissing = new Intent(MainNaviDraw.this, PresentMissing.class);
+            presentMissing.putExtra(SELECTED_FRAG, "list");
+            startActivity(presentMissing);
         } else if (id == R.id.nav_gallery) {
             Intent add = new Intent(MainNaviDraw.this, AddPerson.class);
+            add.putExtra(SELECTED_FRAG, "map");
             startActivity(add);
 
         } else if (id == R.id.nav_slideshow) {

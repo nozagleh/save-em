@@ -13,6 +13,8 @@ import java.util.UUID;
 
 public class ToolBox {
 
+    public static FirebaseManager firebaseManager = new FirebaseManager();
+
     public static String randomString() {
         return UUID.randomUUID().toString();
     }
