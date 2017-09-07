@@ -1,6 +1,11 @@
 package com.nozagleh.captainmexico;
 
+import android.icu.util.Calendar;
+
 import com.google.firebase.database.IgnoreExtraProperties;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by arnar on 2017-08-29.
@@ -22,12 +27,15 @@ public class Person {
     private Boolean visible;
     private String userID;
     private Integer age;
+    private Boolean hasImage;
 
     /**
      * Empty default class constructor
      */
     public Person() {
-
+        found = false;
+        hasImage = false;
+        setDateAdded();
     }
 
     /**
@@ -39,13 +47,15 @@ public class Person {
         this.name = name;
 
         found = false;
+        hasImage = false;
+        setDateAdded();
     }
 
     /**
      * Get the person's ID number
      * @return String person's id
      */
-    public String getID() {
+    public String get_ID() {
         return ID;
     }
 
@@ -193,6 +203,11 @@ public class Person {
         return dateAdded;
     }
 
+    public void setDateAdded() {
+        String date = new SimpleDateFormat("yyyyMMdd_HHmmss").format(java.util.Calendar.getInstance().getTime());
+        this.dateAdded = date;
+    }
+
     /**
      * Set the date when the person was added
      * @param dateAdded
@@ -263,5 +278,13 @@ public class Person {
      */
     public void setAge(Integer age) {
         this.age = age;
+    }
+
+    public Boolean hasImage() {
+        return this.hasImage;
+    }
+
+    public void hasImage(Boolean flag) {
+        this.hasImage = flag;
     }
 }

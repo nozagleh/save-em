@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
@@ -26,6 +27,7 @@ public class PresentMissing extends AppCompatActivity
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
+                    Log.d(TAG_FRAG_LIST, "Clicked list");
                     startFragment(TAG_FRAG_LIST);
                     return true;
                 case R.id.navigation_dashboard:
@@ -53,8 +55,8 @@ public class PresentMissing extends AppCompatActivity
 
         if (extras.getString(SELECTED_FRAG) != null) {
             String frag = extras.getString(SELECTED_FRAG);
-
-            if (frag.equals("map"))
+            Log.d(TAG_FRAG_LIST, frag);
+            if (frag != null && frag.equals("map"))
                 startFragment(TAG_FRAG_MAP);
             else
                 startFragment(TAG_FRAG_LIST);
@@ -75,7 +77,7 @@ public class PresentMissing extends AppCompatActivity
         Fragment fragment = null;
 
         Fragment currentFrag = getSupportFragmentManager().findFragmentByTag(fragTag);
-
+        Log.d("Frag tag -->", fragTag);
         switch (fragTag) {
             case TAG_FRAG_LIST:
                 fragment = new ListPersonFragment();
@@ -85,7 +87,7 @@ public class PresentMissing extends AppCompatActivity
 
         if ( fragment != null && currentFrag != fragment)
             fm.beginTransaction()
-                    .replace(R.id.frag_container, fragment, fragTag)
+                    .replace(R.id.frag_container, new ListPersonFragment(), fragTag)
                     .commit();
     }
 

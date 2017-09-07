@@ -153,7 +153,10 @@ public class AddPerson extends AppCompatActivity {
             if ( loc.length() > 0 )
                 person.setGpsLocation(loc);
 
-            fbm.addPersonsImage(imageUri, person);
+            if (imageUri != null) {
+                fbm.addPersonsImage(imageUri, person);
+                person.hasImage(true);
+            }
 
             // Add the new person
             fbm.addNewPerson(person);

@@ -1,5 +1,6 @@
 package com.nozagleh.captainmexico;
 
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -20,6 +21,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 
 /**
  * Created by arnar on 2017-08-29.
@@ -29,7 +31,7 @@ public class FirebaseManager {
 
     private final String TAG = "FirebaseManager";
 
-    private DatabaseReference db;
+    public DatabaseReference db;
 
     private FirebaseStorage storage = FirebaseStorage.getInstance();
 
@@ -39,14 +41,14 @@ public class FirebaseManager {
 
     public FirebaseManager() {
         db = FirebaseDatabase.getInstance().getReference();
-        addListener();
+        //addListener();
 
         storageReference = storage.getReference();
         personsImagesReference = storageReference.child("person-images");
     }
 
     public void addNewPerson(Person person) {
-        db.child("person").child(person.getID()).setValue(person);
+        db.child("person").child(person.get_ID()).setValue(person);
     }
 
     public Person getPerson(Person person) {
@@ -65,7 +67,6 @@ public class FirebaseManager {
                 // Iterate the persons list from Firebase
                 for (DataSnapshot tempSnap : dataSnapshot.child("person").getChildren()) {
                     Person person = tempSnap.getValue(Person.class);
-                    Log.d(TAG, "Name: " + person.getName());
                 }
             }
 
@@ -84,12 +85,13 @@ public class FirebaseManager {
      * @return StorageReference, a reference to the image
      */
     public StorageReference getPersonsImageReference(String id) {
-        //String imgid = id + ".jpg";
-        return personsImagesReference.child(id);
+        String imgid = id + ".jpg";
+
+        return personsImagesReference.child(imgid);
     }
 
     public void addPersonsImage(Uri image, Person person) {
-        StorageReference newImage = personsImagesReference.child(person.getID() + ".jpg");
+        StorageReference newImage = personsImagesReference.child(person.get_ID() + ".jpg");
         if ( image != null )
             newImage.putFile(image)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
