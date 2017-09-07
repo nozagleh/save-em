@@ -266,4 +266,9 @@ public class AddPerson extends AppCompatActivity {
         finish();
         return super.onSupportNavigateUp();
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
 }

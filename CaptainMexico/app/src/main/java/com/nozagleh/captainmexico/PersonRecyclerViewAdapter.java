@@ -1,6 +1,8 @@
 package com.nozagleh.captainmexico;
 
 import android.content.Context;
+import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,8 +12,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.StorageReference;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
@@ -26,6 +31,10 @@ public class PersonRecyclerViewAdapter extends RecyclerView.Adapter<PersonRecycl
     private Context context;
     // Init the list of persons
     private ArrayList<Person> persons;
+
+    private Uri url;
+
+    private PersonRecyclerViewAdapter.ViewHolder holder;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -64,6 +73,7 @@ public class PersonRecyclerViewAdapter extends RecyclerView.Adapter<PersonRecycl
 
     @Override
     public void onBindViewHolder(PersonRecyclerViewAdapter.ViewHolder holder, int position) {
+        this.holder = holder;
         // Set the current iterating person
         Person person = this.persons.get(position);
 
@@ -72,19 +82,31 @@ public class PersonRecyclerViewAdapter extends RecyclerView.Adapter<PersonRecycl
         holder.txtAge.setText(String.valueOf(person.getAge()));
         holder.txtMissingDate.setText(String.valueOf(person.getDateAdded()));
         holder.txtStatus.setText(person.getFound().toString());
-
-        Log.d(TAG, person.hasImage().toString());
-        //if (person.hasImage()) {
-            StorageReference sr = ToolBox.firebaseManager.getPersonsImageReference(person.get_ID());
-            Log.d(TAG, sr.toString());
-            GlideApp.with(this.context)
-                    .load(sr.getDownloadUrl())
-                    .into(holder.imageViewPerson);
-        //}
+        holder.imageViewPerson.setImageDrawable(null);
+        StorageReference sr = ToolBox.firebaseManager.getPersonsImageReference(person.get_ID());
+        sr.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Log.d("YES", uri.toString());
+                getImage(uri);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG, "fail");
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
         return this.persons.size();
+    }
+
+    public void getImage(Uri uri) {
+        Log.d(TAG, uri.toString());
+        Glide.with(this.context)
+                .load(uri)
+                .into(holder.imageViewPerson);
     }
 }

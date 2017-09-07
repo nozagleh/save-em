@@ -11,6 +11,8 @@ import android.widget.ImageView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -39,7 +41,13 @@ public class FirebaseManager {
 
     private StorageReference personsImagesReference;
 
+    private FirebaseAuth mAuth;
+
     public FirebaseManager() {
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        mAuth.signInAnonymously();
+
         db = FirebaseDatabase.getInstance().getReference();
         //addListener();
 
@@ -91,7 +99,7 @@ public class FirebaseManager {
     }
 
     public void addPersonsImage(Uri image, Person person) {
-        StorageReference newImage = personsImagesReference.child(person.get_ID() + ".jpg");
+        StorageReference newImage = personsImagesReference.child(person.get_ID());
         if ( image != null )
             newImage.putFile(image)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {

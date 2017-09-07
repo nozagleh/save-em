@@ -56,9 +56,10 @@ public class PresentMissing extends AppCompatActivity
         if (extras.getString(SELECTED_FRAG) != null) {
             String frag = extras.getString(SELECTED_FRAG);
             Log.d(TAG_FRAG_LIST, frag);
+            Log.d("LIST FRAG", TAG_FRAG_LIST);
             if (frag != null && frag.equals("map"))
                 startFragment(TAG_FRAG_MAP);
-            else
+            else if (frag !=null && !frag.equals("list"))
                 startFragment(TAG_FRAG_LIST);
 
         }
@@ -81,13 +82,15 @@ public class PresentMissing extends AppCompatActivity
         switch (fragTag) {
             case TAG_FRAG_LIST:
                 fragment = new ListPersonFragment();
+                break;
             case TAG_FRAG_MAP:
                 fragment = new MapPersonFragment();
+                break;
         }
 
         if ( fragment != null && currentFrag != fragment)
             fm.beginTransaction()
-                    .replace(R.id.frag_container, new ListPersonFragment(), fragTag)
+                    .replace(R.id.frag_container, fragment, fragTag)
                     .commit();
     }
 

@@ -13,6 +13,8 @@ import java.util.UUID;
 
 public class ToolBox {
 
+    public static final String FIREBASE_ROOT = "https://firebasestorage.googleapis.com/v0/b/lostinmex-31d91.appspot.com/o/person-images%%%1$s.jpg?alt=media";
+
     public static FirebaseManager firebaseManager = new FirebaseManager();
 
     public static String randomString() {
