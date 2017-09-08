@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.StorageReference;
@@ -75,7 +76,7 @@ public class PersonRecyclerViewAdapter extends RecyclerView.Adapter<PersonRecycl
     public void onBindViewHolder(PersonRecyclerViewAdapter.ViewHolder holder, int position) {
         // Set the current iterating person
         Person person = this.persons.get(position);
-
+        Log.d(TAG, person.getName() + ", " + person.get_ID());
         // Set the text fields
         holder.txtName.setText(person.getName());
         holder.txtAge.setText(String.valueOf(person.getAge()));
@@ -83,11 +84,21 @@ public class PersonRecyclerViewAdapter extends RecyclerView.Adapter<PersonRecycl
         holder.txtStatus.setText(person.getFound().toString());
 
         holder.imageViewPerson.setImageDrawable(null);
-        Log.d(TAG, uris.toString());
-        if (uris.size() > 0)
-            Glide.with(this.context)
-                .load(uris.get(position))
+        //Log.d(TAG, uris.toString());
+
+        if (uris.size() > 0) {
+            Uri personUri = Uri.parse("");
+            for (Uri uri: uris) {
+                if (uri.toString().contains(person.get_ID()))
+                    personUri = uri;
+            }
+
+            Glide.with(context.getApplicationContext())
+                .load(personUri)
                 .into(holder.imageViewPerson);
+            
+            Log.d(TAG, uris.get(position).toString());
+        }
     }
 
     @Override
