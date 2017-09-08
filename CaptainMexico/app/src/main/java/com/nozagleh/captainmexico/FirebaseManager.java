@@ -43,6 +43,8 @@ public class FirebaseManager {
 
     private FirebaseAuth mAuth;
 
+    private ArrayList<Uri> uris = new ArrayList<>();
+
     public FirebaseManager() {
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -89,17 +91,34 @@ public class FirebaseManager {
 
     /**
      * Get a person's image reference
-     * @param id Person's id number
+     * @param persons Arraylist of persons
      * @return StorageReference, a reference to the image
      */
-    public StorageReference getPersonsImageReference(String id) {
-        String imgid = id + ".jpg";
+    public ArrayList<Uri> getPersonsImageReference(ArrayList<Person> persons) {
+        Log.d(TAG,persons.toString());
+        for (Person person: persons) {
+            final Person p = person;
+            StorageReference sr = personsImagesReference.child(person.get_ID() + ".jpg");
 
-        return personsImagesReference.child(imgid);
+            sr.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(Uri uri) {
+                    uris.add(uri);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.d(TAG, p.get_ID());
+                    Log.d(TAG, "Failed --> " + e.getMessage());
+                }
+            });
+        }
+
+        return uris;
     }
 
     public void addPersonsImage(Uri image, Person person) {
-        StorageReference newImage = personsImagesReference.child(person.get_ID());
+        StorageReference newImage = personsImagesReference.child(person.get_ID() + ".jpg");
         if ( image != null )
             newImage.putFile(image)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {

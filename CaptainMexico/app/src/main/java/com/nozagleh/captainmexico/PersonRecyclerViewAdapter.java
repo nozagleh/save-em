@@ -29,12 +29,11 @@ public class PersonRecyclerViewAdapter extends RecyclerView.Adapter<PersonRecycl
 
     // Init the context
     private Context context;
+
     // Init the list of persons
     private ArrayList<Person> persons;
-
-    private Uri url;
-
-    private PersonRecyclerViewAdapter.ViewHolder holder;
+    // Init the list of Uris
+    private ArrayList<Uri> uris;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -55,10 +54,11 @@ public class PersonRecyclerViewAdapter extends RecyclerView.Adapter<PersonRecycl
         }
     }
 
-    public PersonRecyclerViewAdapter(Context context, ArrayList<Person> persons) {
+    public PersonRecyclerViewAdapter(Context context, ArrayList<Person> persons, ArrayList<Uri> uris) {
         // Set the variables passed with the constuctor
         this.context = context;
         this.persons = persons;
+        this.uris = uris;
     }
 
     @Override
@@ -73,7 +73,6 @@ public class PersonRecyclerViewAdapter extends RecyclerView.Adapter<PersonRecycl
 
     @Override
     public void onBindViewHolder(PersonRecyclerViewAdapter.ViewHolder holder, int position) {
-        this.holder = holder;
         // Set the current iterating person
         Person person = this.persons.get(position);
 
@@ -82,20 +81,13 @@ public class PersonRecyclerViewAdapter extends RecyclerView.Adapter<PersonRecycl
         holder.txtAge.setText(String.valueOf(person.getAge()));
         holder.txtMissingDate.setText(String.valueOf(person.getDateAdded()));
         holder.txtStatus.setText(person.getFound().toString());
+
         holder.imageViewPerson.setImageDrawable(null);
-        StorageReference sr = ToolBox.firebaseManager.getPersonsImageReference(person.get_ID());
-        sr.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-                Log.d("YES", uri.toString());
-                getImage(uri);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.d(TAG, "fail");
-            }
-        });
+        Log.d(TAG, uris.toString());
+        if (uris.size() > 0)
+            Glide.with(this.context)
+                .load(uris.get(position))
+                .into(holder.imageViewPerson);
     }
 
     @Override
@@ -103,10 +95,7 @@ public class PersonRecyclerViewAdapter extends RecyclerView.Adapter<PersonRecycl
         return this.persons.size();
     }
 
-    public void getImage(Uri uri) {
-        Log.d(TAG, uri.toString());
-        Glide.with(this.context)
-                .load(uri)
-                .into(holder.imageViewPerson);
+    public void setUris(ArrayList<Uri> uris) {
+        this.uris = uris;
     }
 }

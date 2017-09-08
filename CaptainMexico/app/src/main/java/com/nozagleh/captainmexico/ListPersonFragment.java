@@ -3,7 +3,9 @@ package com.nozagleh.captainmexico;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -11,11 +13,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
+
+import static android.content.ContentValues.TAG;
 
 
 /**
@@ -27,6 +36,9 @@ import java.util.ArrayList;
  * create an instance of this fragment.
  */
 public class ListPersonFragment extends Fragment {
+    // Fragment's tag
+    private static final String TAG = "ListPersonFragment";
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -39,10 +51,13 @@ public class ListPersonFragment extends Fragment {
     private View view;
 
     private FragmentListener mListener;
+    private PersonRecyclerViewAdapter mAdapter;
 
+    protected SwipeRefreshLayout swipeRefreshLayout;
     protected RecyclerView rvPersons;
 
     private ArrayList<Person> persons;
+    private ArrayList<Uri> uris;
 
     public ListPersonFragment() {
         // Required empty public constructor
@@ -86,8 +101,11 @@ public class ListPersonFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshPersons);
         rvPersons = view.findViewById(R.id.rvPersons);
         persons = new ArrayList<>();
+
+        uris = getUris();
 
         ToolBox.firebaseManager.db.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -99,7 +117,7 @@ public class ListPersonFragment extends Fragment {
                     persons.add(person);
                 }
 
-                RecyclerView.Adapter mAdapter = new PersonRecyclerViewAdapter(getContext(), persons);
+                mAdapter = new PersonRecyclerViewAdapter(getContext(), persons, uris);
                 rvPersons.setAdapter(mAdapter);
 
                 RecyclerView.LayoutManager mLayout = new LinearLayoutManager(getActivity());
@@ -114,6 +132,26 @@ public class ListPersonFragment extends Fragment {
 
         Log.d("Persons", String.valueOf(persons.size()));
 
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshList();
+            }
+        });
+
+    }
+
+    public void refreshList() {
+        uris = getUris();
+
+        mAdapter.setUris(uris);
+        mAdapter.notifyDataSetChanged();
+
+        swipeRefreshLayout.setRefreshing(false);
+    }
+
+    public ArrayList<Uri> getUris() {
+        return ToolBox.firebaseManager.getPersonsImageReference(this.persons);
     }
 
     // TODO: Rename method, update argument and hook method into UI event

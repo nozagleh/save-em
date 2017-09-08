@@ -59,7 +59,7 @@ public class PresentMissing extends AppCompatActivity
             Log.d("LIST FRAG", TAG_FRAG_LIST);
             if (frag != null && frag.equals("map"))
                 startFragment(TAG_FRAG_MAP);
-            else if (frag !=null && !frag.equals("list"))
+            else if (frag != null && frag.equals("list"))
                 startFragment(TAG_FRAG_LIST);
 
         }
