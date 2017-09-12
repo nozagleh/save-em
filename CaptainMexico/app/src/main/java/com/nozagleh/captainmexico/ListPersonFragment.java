@@ -143,15 +143,18 @@ public class ListPersonFragment extends Fragment {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-                            JSONArray personsData = response.getJSONArray("persons");
+                            JSONObject personsData = response.getJSONObject("persons");
                             for (int i = 0; i < personsData.length(); i++) {
                                 Log.d("JSON LENGTH", String.valueOf(personsData.length()));
-                                JSONObject personData = personsData.getJSONObject(i);
+                                JSONObject personData = personsData.getJSONObject(String.valueOf(i));
                                 Person person = new Person();
                                 Log.d("JSON", personData.getString("id"));
-                                person.set_ID(personData.getString("id"));
-                                person.setName(personData.getString("firstname") + personData.getString("lastname"));
-                                person.setFound(personData.getBoolean("found"));
+                                Log.d("JSON FRISTNAME", personData.getString("firstname"));
+                                Log.d("JSON LASTNAME", personData.getString("lastname"));
+                                //person.set_ID(personData.getString("id"));
+                                //person.setName(personData.getString("firstname") + personData.getString("lastname"));
+                                Log.d("JSON FOUND", String.valueOf(personData.getInt("found")));
+                                //person.setFound(personData.get("found"));
 
                                 persons.add(person);
                             }
