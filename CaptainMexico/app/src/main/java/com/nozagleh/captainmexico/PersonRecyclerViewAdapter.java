@@ -76,37 +76,17 @@ public class PersonRecyclerViewAdapter extends RecyclerView.Adapter<PersonRecycl
         this.holder = holder;
         // Set the current iterating person
         Person person = this.persons.get(position);
-
+        Log.d(TAG, person.getName());
         // Set the text fields
         holder.txtName.setText(person.getName());
-        holder.txtAge.setText(String.valueOf(person.getAge()));
-        holder.txtMissingDate.setText(String.valueOf(person.getDateAdded()));
+        //holder.txtAge.setText(String.valueOf(person.getAge()));
+        //holder.txtMissingDate.setText(String.valueOf(person.getDateAdded()));
         holder.txtStatus.setText(person.getFound().toString());
-        holder.imageViewPerson.setImageDrawable(null);
-        StorageReference sr = ToolBox.firebaseManager.getPersonsImageReference(person.get_ID());
-        sr.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-                Log.d("YES", uri.toString());
-                getImage(uri);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.d(TAG, "fail");
-            }
-        });
+        //holder.imageViewPerson.setImageDrawable(null);
     }
 
     @Override
     public int getItemCount() {
         return this.persons.size();
-    }
-
-    public void getImage(Uri uri) {
-        Log.d(TAG, uri.toString());
-        Glide.with(this.context)
-                .load(uri)
-                .into(holder.imageViewPerson);
     }
 }

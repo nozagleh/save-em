@@ -11,9 +11,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -89,7 +100,7 @@ public class ListPersonFragment extends Fragment {
         rvPersons = view.findViewById(R.id.rvPersons);
         persons = new ArrayList<>();
 
-        ToolBox.firebaseManager.db.addListenerForSingleValueEvent(new ValueEventListener() {
+        /*ToolBox.firebaseManager.db.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // Iterate the persons list from Firebase
@@ -110,9 +121,48 @@ public class ListPersonFragment extends Fragment {
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
+        });*/
 
-        Log.d("Persons", String.valueOf(persons.size()));
+        RequestQueue queue = Volley.newRequestQueue(this.getContext());
+        String url = "http://192.168.1.116:8000/mex/persons";
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
+                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONArray personsData = response.getJSONArray("persons");
+                            for (int i = 0; i < personsData.length(); i++) {
+                                Log.d("JSON LENGTH", String.valueOf(personsData.length()));
+                                JSONObject personData = personsData.getJSONObject(i);
+                                Person person = new Person();
+                                Log.d("JSON", personData.getString("id"));
+                                person.set_ID(personData.getString("id"));
+                                person.setName(personData.getString("firstname") + personData.getString("lastname"));
+                                person.setFound(personData.getBoolean("found"));
+
+                                persons.add(person);
+                            }
+
+                            RecyclerView.Adapter mAdapter = new PersonRecyclerViewAdapter(getContext(), persons);
+                            rvPersons.setAdapter(mAdapter);
+
+                            RecyclerView.LayoutManager mLayout = new LinearLayoutManager(getActivity());
+                            rvPersons.setLayoutManager(mLayout);
+
+                        }catch (JSONException e) {
+                            Log.d("JSON ERROR", e.getMessage());
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                });
+
+        queue.add(jsonObjectRequest);
+
+        //Log.d("Persons", String.valueOf(persons.size()));
 
     }
 
