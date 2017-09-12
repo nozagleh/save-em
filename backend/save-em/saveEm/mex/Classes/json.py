@@ -29,8 +29,10 @@ class GenerateJSON:
 	def getAllPersonsJSON(self, *persons):
 		data = {}
 		count = 0
+		dictPersons = {}
 		for person in persons:
-			data[person.id] = self.getPersonJSON(person)
-			count+1
+			dictPersons.update({count:self.getPersonJSON(person)})
+			count = count+1
 
+		data = {'persons':dictPersons}
 		return data
