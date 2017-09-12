@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.StorageReference;
@@ -29,12 +30,9 @@ public class PersonRecyclerViewAdapter extends RecyclerView.Adapter<PersonRecycl
 
     // Init the context
     private Context context;
+
     // Init the list of persons
     private ArrayList<Person> persons;
-
-    private Uri url;
-
-    private PersonRecyclerViewAdapter.ViewHolder holder;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -73,16 +71,14 @@ public class PersonRecyclerViewAdapter extends RecyclerView.Adapter<PersonRecycl
 
     @Override
     public void onBindViewHolder(PersonRecyclerViewAdapter.ViewHolder holder, int position) {
-        this.holder = holder;
         // Set the current iterating person
         Person person = this.persons.get(position);
-        Log.d(TAG, person.getName());
+        Log.d(TAG, person.getName() + ", " + person.get_ID());
         // Set the text fields
         holder.txtName.setText(person.getName());
         //holder.txtAge.setText(String.valueOf(person.getAge()));
         //holder.txtMissingDate.setText(String.valueOf(person.getDateAdded()));
         holder.txtStatus.setText(person.getFound().toString());
-        //holder.imageViewPerson.setImageDrawable(null);
     }
 
     @Override
