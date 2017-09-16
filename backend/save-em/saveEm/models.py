@@ -139,7 +139,6 @@ class PersonLog(models.Model):
         managed = False
         db_table = 'person_log'
 
-
 class Persons(models.Model):
     id = models.IntegerField(primary_key=True)
     firstname = models.CharField(max_length=64)

@@ -141,7 +141,6 @@ class PersonLog(models.Model):
         db_table = 'person_log'
 
 class Persons(models.Model):
-    id = models.IntegerField(primary_key=True)
     firstname = models.CharField(max_length=64)
     lastname = models.CharField(max_length=128)
     birthdate = models.DateField()
@@ -168,7 +167,6 @@ class Persons(models.Model):
 
 
 class Userkeys(models.Model):
-    id = models.IntegerField()
     key = models.CharField(unique=True, max_length=255, primary_key=True)
     dateofregistration = models.DateTimeField(db_column='dateOfRegistration', blank=True, null=True)  # Field name made lowercase.
 

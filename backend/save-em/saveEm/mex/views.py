@@ -5,11 +5,14 @@ from django.shortcuts import render, Http404
 
 # Create your views here.
 
-from django.http import HttpResponse, JsonResponse
+import json
+
+from django.http import HttpResponse, JsonResponse, HttpRequest
 
 from .models import Persons
 
 from Classes.json import GenerateJSON
+from Classes.Person import Person
 
 data = GenerateJSON()
 
@@ -37,3 +40,14 @@ def personsLost(request):
 def findFoundPersons(found):
 	persons = Persons.objects.all().filter(found=found)
 	return JsonResponse(data.getAllPersonsJSON(*persons))
+
+def addPerson(request):
+	response = "none"
+	values = request.GET
+	person = Person(request.GET)
+	for value in values:
+		person.addField(value)
+
+	person.save()
+	return HttpResponse(response)
+	#return HttpResponse(request.POST.getlist('name', 'asdas'))
