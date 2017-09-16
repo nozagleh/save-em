@@ -36,8 +36,8 @@ public class AddPerson extends AppCompatActivity {
     private ImageButton imageButton;
     private Spinner spinnerSex;
     private Button btnSubmit;
-    private EditText txtName, txtEyeColor, txtShoeSize,
-            txtHeight, txtHairColor;
+    private EditText txtFirstName, txtLastName, txtBirthday, txtNationality,
+            txtHeight, txtHairColor, txtWeight;
 
     private FirebaseManager fbm;
 
@@ -67,11 +67,13 @@ public class AddPerson extends AppCompatActivity {
         gpsGranted = pm.gpsPermission(this);
 
         // Init the text inputs
-        txtName = (EditText) findViewById(R.id.txtName);
-        txtEyeColor = (EditText) findViewById(R.id.txtEyeColor);
-        txtShoeSize = (EditText) findViewById(R.id.txtShoeSize);
+        txtFirstName = (EditText) findViewById(R.id.txtFirstName);
+        txtLastName = (EditText) findViewById(R.id.txtLastName);
+        txtBirthday = (EditText) findViewById(R.id.txtBirthdate);
+        txtNationality = (EditText) findViewById(R.id.txtNationality);
         txtHeight = (EditText) findViewById(R.id.txtHeight);
         txtHairColor = (EditText) findViewById(R.id.txtHairColor);
+        txtWeight = (EditText) findViewById(R.id.txtWeight);
 
         // Init the image button, add click listener
         imageButton = (ImageButton) findViewById(R.id.imgBtn);
@@ -121,22 +123,15 @@ public class AddPerson extends AppCompatActivity {
             Person person = new Person();
             person.set_ID(ToolBox.randomString());
 
-            if (txtName.length() > 0)
-                person.setName(txtName.getText().toString());
+            person.setFirstName(txtFirstName.getText().toString());
+            person.setLastName(txtLastName.getText().toString());
+            //person.setBirthdate();
+            person.setNationality(txtNationality.getText().toString());
+            person.setHeight(Double.valueOf(txtHeight.getText().toString()));
+            person.setHairColor(txtHairColor.getText().toString());
+            person.setWeight(Double.valueOf(txtWeight.getText().toString()));
 
             person.setGender(spinnerSex.getSelectedItem().toString());
-
-            if (txtShoeSize.length() > 0)
-                person.setShoeSize(Double.valueOf(txtShoeSize.getText().toString()));
-
-            if (txtHeight.length() > 0)
-                person.setHeight(Double.valueOf(txtHeight.getText().toString()));
-
-            if (txtEyeColor.length() > 0)
-                person.setEyeColor(txtEyeColor.getText().toString());
-
-            if (txtHairColor.length() > 0)
-                person.setHairColor(txtHairColor.getText().toString());
 
             // Get the current location
             String loc = "";

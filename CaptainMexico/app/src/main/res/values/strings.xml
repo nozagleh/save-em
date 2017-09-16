@@ -82,8 +82,25 @@
 
     <string name="hint_gps_deny">Please grant GPS access</string>
     <string name="hint_person_added">Person added</string>
+    <string name="hint_no_internet">No internet connection</string>
 
     <string name="txt_person_image_desc">Person\'s image</string>
+    <string name="txt_firstname">Firstname</string>
+    <string name="txt_lastname">Lastname</string>
+    <string name="txt_birtdate">Birthdate</string>
+    <string name="txt_sex">Gender</string>
+    <string name="txt_nationality">Nationality</string>
+    <string name="txt_height">Height</string>
+    <string name="txt_haircolor">Hair Color</string>
+    <string name="txt_weight">Weight</string>
+    <string name="txt_time_of_missing">Time of missing</string>
+    <string name="txt_place_of_missing">Place of missing</string>
+    <string name="txt_country_of_missing">Country of missing</string>
+    <string name="txt_found">Found</string>
+    <string name="txt_comments">Comments</string>
+    <string name="txt_btn_report_missing">Report missing</string>
+
+    <string name="lst_name">%1$s %2$s</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

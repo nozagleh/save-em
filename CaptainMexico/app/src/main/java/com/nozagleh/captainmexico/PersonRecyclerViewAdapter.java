@@ -1,6 +1,7 @@
 package com.nozagleh.captainmexico;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -37,18 +38,15 @@ public class PersonRecyclerViewAdapter extends RecyclerView.Adapter<PersonRecycl
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         // Elements present for each person
-        public TextView txtName;
-        public TextView txtAge;
-        public TextView txtMissingDate;
-        public TextView txtStatus;
+        public TextView txtName, txtGender, txtStatus, txtDate;
         public ImageView imageViewPerson;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            txtName = (TextView) itemView.findViewById(R.id.txtName);
-            txtAge = (TextView) itemView.findViewById(R.id.txtHeight);
-            txtMissingDate = (TextView) itemView.findViewById(R.id.txtDate);
-            txtStatus = (TextView) itemView.findViewById(R.id.txtStatus);
+            txtName = (TextView) itemView.findViewById(R.id.lstName);
+            txtDate = (TextView) itemView.findViewById(R.id.lstDate);
+            txtStatus = (TextView) itemView.findViewById(R.id.lstStatus);
+            txtGender = (TextView) itemView.findViewById(R.id.lstGender);
             imageViewPerson = (ImageView) itemView.findViewById(R.id.imgPerson);
         }
     }
@@ -73,12 +71,13 @@ public class PersonRecyclerViewAdapter extends RecyclerView.Adapter<PersonRecycl
     public void onBindViewHolder(PersonRecyclerViewAdapter.ViewHolder holder, int position) {
         // Set the current iterating person
         Person person = this.persons.get(position);
-        Log.d(TAG, person.getName() + ", " + person.get_ID());
+        Log.d(TAG, person.getFirstName() + ", " + person.get_ID());
         // Set the text fields
-        holder.txtName.setText(person.getName());
-        //holder.txtAge.setText(String.valueOf(person.getAge()));
-        //holder.txtMissingDate.setText(String.valueOf(person.getDateAdded()));
-        holder.txtStatus.setText(person.getFound().toString());
+        Resources res = context.getResources();
+        holder.txtName.setText(res.getString(R.string.lst_name, person.getFirstName(), person.getLastName()));
+        holder.txtGender.setText(person.getGender());
+        //holder.txtStatus.setText(person.getFound());
+        holder.txtDate.setText(person.getMissingDate().toString());
     }
 
     @Override

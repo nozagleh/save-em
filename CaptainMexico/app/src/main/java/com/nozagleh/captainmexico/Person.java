@@ -14,41 +14,27 @@ import java.util.Date;
 @IgnoreExtraProperties
 public class Person {
     private String ID;
-    private String name;
+    private String firstName;
+    private String lastName;
+    private Date birthdate;
     private String gender;
+    private Double weight;
     private String hairColor;
     private Double height;
-    private String eyeColor;
-    private Double shoeSize;
     private String extraFeatures;
     private String gpsLocation;
-    private String dateAdded;
-    private Boolean found;
-    private Boolean visible;
+    private String nationality;
+    private Date missingDate;
+    private Integer found;
     private String userID;
-    private Integer age;
     private Boolean hasImage;
 
     /**
      * Empty default class constructor
      */
     public Person() {
-        found = false;
+        found = 0;
         hasImage = false;
-        setDateAdded();
-    }
-
-    /**
-     * Constructor that takes in a persons name
-     * @param name String person name
-     */
-    public Person(String ID, String name) {
-        this.ID = ID;
-        this.name = name;
-
-        found = false;
-        hasImage = false;
-        setDateAdded();
     }
 
     /**
@@ -67,20 +53,28 @@ public class Person {
         this.ID = ID;
     }
 
-    /**
-     * Get the person's name
-     * @return String name
-     */
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    /**
-     * Set the person's name
-     * @param name String name
-     */
-    public void setName(String name) {
-        this.name = name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public Date getBirthdate() {
+        return birthdate;
+    }
+
+    public void setBirthdate(Date birthdate) {
+        this.birthdate = birthdate;
     }
 
     /**
@@ -97,6 +91,14 @@ public class Person {
      */
     public void setGender(String gender) {
         this.gender = gender;
+    }
+
+    public Double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(Double weight) {
+        this.weight = weight;
     }
 
     /**
@@ -132,38 +134,6 @@ public class Person {
     }
 
     /**
-     * Get the person's eye color
-     * @return String eye color
-     */
-    public String getEyeColor() {
-        return eyeColor;
-    }
-
-    /**
-     * Set the person's eye color
-     * @param eyeColor String eye color
-     */
-    public void setEyeColor(String eyeColor) {
-        this.eyeColor = eyeColor;
-    }
-
-    /**
-     * Get the person's shoe size
-     * @return Double shoe size
-     */
-    public Double getShoeSize() {
-        return shoeSize;
-    }
-
-    /**
-     * Set the person's shoe size
-     * @param shoeSize Double shoe size
-     */
-    public void setShoeSize(Double shoeSize) {
-        this.shoeSize = shoeSize;
-    }
-
-    /**
      * Get extra features, text with deeper description
      * @return String extra features
      */
@@ -195,32 +165,27 @@ public class Person {
         this.gpsLocation = gpsLocation;
     }
 
-    /**
-     * Get the date when the person was added
-     * @return String date added
-     */
-    public String getDateAdded() {
-        return dateAdded;
+    public String getNationality() {
+        return nationality;
     }
 
-    public void setDateAdded() {
-        String date = new SimpleDateFormat("yyyyMMdd_HHmmss").format(java.util.Calendar.getInstance().getTime());
-        this.dateAdded = date;
+    public void setNationality(String nationality) {
+        this.nationality = nationality;
     }
 
-    /**
-     * Set the date when the person was added
-     * @param dateAdded
-     */
-    public void setDateAdded(String dateAdded) {
-        this.dateAdded = dateAdded;
+    public Date getMissingDate() {
+        return missingDate;
+    }
+
+    public void setMissingDate(Date missingDate) {
+        this.missingDate = missingDate;
     }
 
     /**
      * Get if the person has been found
      * @return Boolean found
      */
-    public Boolean getFound() {
+    public Integer getFound() {
         return found;
     }
 
@@ -228,24 +193,8 @@ public class Person {
      * Set if the person has been found or not
      * @param found Boolean found
      */
-    public void setFound(Boolean found) {
+    public void setFound(Integer found) {
         this.found = found;
-    }
-
-    /**
-     * Get if the person is visible
-     * @return Boolean is visible
-     */
-    public Boolean getVisible() {
-        return visible;
-    }
-
-    /**
-     * Set if the person is visible
-     * @param visible Boolean visible
-     */
-    public void setVisible(Boolean visible) {
-        this.visible = visible;
     }
 
     /**
@@ -262,22 +211,6 @@ public class Person {
      */
     public void setUserID(String userID) {
         this.userID = userID;
-    }
-
-    /**
-     * Get the age of the person
-     * @return Integer age
-     */
-    public Integer getAge() {
-        return age;
-    }
-
-    /**
-     * Set the age of the person
-     * @param age Integer age
-     */
-    public void setAge(Integer age) {
-        this.age = age;
     }
 
     public Boolean hasImage() {

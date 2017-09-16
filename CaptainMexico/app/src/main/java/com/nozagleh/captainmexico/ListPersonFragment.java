@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -30,7 +31,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.util.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import static android.content.ContentValues.TAG;
 
@@ -113,31 +119,20 @@ public class ListPersonFragment extends Fragment {
         rvPersons = view.findViewById(R.id.rvPersons);
         persons = new ArrayList<>();
 
-        /*ToolBox.firebaseManager.db.addListenerForSingleValueEvent(new ValueEventListener() {
+        fetchList();
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // Iterate the persons list from Firebase
-
-                for (DataSnapshot tempSnap : dataSnapshot.child("person").getChildren()) {
-                    Person person = tempSnap.getValue(Person.class);
-                    persons.add(person);
-                }
-
-                mAdapter = new PersonRecyclerViewAdapter(getContext(), persons, uris);
-                rvPersons.setAdapter(mAdapter);
-
-                RecyclerView.LayoutManager mLayout = new LinearLayoutManager(getActivity());
-                rvPersons.setLayoutManager(mLayout);
+            public void onRefresh() {
+                fetchList();
             }
+        });
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+    }
 
-            }
-        });*/
-
+    private void fetchList() {
         RequestQueue queue = Volley.newRequestQueue(this.getContext());
-        String url = "http://192.168.1.116:8000/mex/persons";
+        String url = "http://192.168.1.139:8000/mex/persons/";
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                 (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                     @Override
@@ -155,6 +150,31 @@ public class ListPersonFragment extends Fragment {
                                 //person.setName(personData.getString("firstname") + personData.getString("lastname"));
                                 Log.d("JSON FOUND", String.valueOf(personData.getInt("found")));
                                 //person.setFound(personData.get("found"));
+                                person.set_ID(personData.getString("id"));
+                                person.setFirstName(personData.getString("firstname"));
+                                person.setLastName(personData.getString("lastname"));
+                                person.setGender(personData.getString("gender"));
+
+                                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+                                String date = personData.getString("birthday");
+
+                                try {
+                                    Date bday = dateFormat.parse(date);
+                                    person.setBirthdate(bday);
+                                } catch (ParseException e) {
+                                    Log.d(TAG, e.getMessage());
+                                }
+
+                                try {
+                                    Date missingDay = dateFormat.parse(personData.getString("missingDate"));
+                                    person.setMissingDate(missingDay);
+                                } catch (ParseException e) {
+                                    Log.d(TAG, e.getMessage());
+                                }
+
+                                person.setHairColor(personData.getString("haircolor"));
+                                person.setFound(personData.getInt("found"));
+                                person.setHeight(personData.getDouble("height"));
 
                                 persons.add(person);
                             }
@@ -165,6 +185,8 @@ public class ListPersonFragment extends Fragment {
                             RecyclerView.LayoutManager mLayout = new LinearLayoutManager(getActivity());
                             rvPersons.setLayoutManager(mLayout);
 
+                            swipeRefreshLayout.setRefreshing(false);
+
                         }catch (JSONException e) {
                             Log.d("JSON ERROR", e.getMessage());
                         }
@@ -172,21 +194,13 @@ public class ListPersonFragment extends Fragment {
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-
+                        Snackbar noInternet = Snackbar.make(getActivity().findViewById(R.id.rvPersons),R.string.hint_no_internet,Snackbar.LENGTH_LONG);
+                        noInternet.show();
+                        swipeRefreshLayout.setRefreshing(false);
                     }
                 });
 
         queue.add(jsonObjectRequest);
-
-        //Log.d("Persons", String.valueOf(persons.size()));
-
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                //TODO add on refresh
-            }
-        });
-
     }
 
     // TODO: Rename method, update argument and hook method into UI event
