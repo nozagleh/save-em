@@ -18,9 +18,8 @@ class GenerateJSON:
 		data['height'] = person.height
 		data['haircolor'] = person.haircolor
 		data['weight'] = person.weight
-		data['timeMissing'] = person.timeofmissing
-		data['placeMissing'] = person.placeofmissing
-		data['countryMissing'] = person.countryofmissing
+		data['missingDate'] = person.missingdate
+		data['gpsLocation'] = person.gpslocation
 		data['found'] = person.found
 		data['remarks'] = person.comments
 

@@ -1,6 +1,8 @@
 CREATE DATABASE `save-em`;
 USE `save-em`;
 
+DROP TABLE `persons`;
+
 CREATE TABLE `persons`(
 	`id` INT auto_increment,
     `firstname` VARCHAR(64) NOT NULL,
@@ -11,23 +13,24 @@ CREATE TABLE `persons`(
     `height` DOUBLE DEFAULT 0.00,
     `hairColor` VARCHAR(24),
     `weight` DOUBLE DEFAULT 0.00,
-    `timeOfMissing` DATETIME DEFAULT NOW(),
-    `placeOfMissing` VARCHAR(128),
-    `countryOfMissing` VARCHAR(128),
+    `gpsLocation` VARCHAR(128) DEFAULT NULL,
     `found` BOOLEAN DEFAULT FALSE,
     `comments` TEXT DEFAULT NULL,
+    `missingDate` DATETIME DEFAULT NOW(),
     
     PRIMARY KEY(`id`)
 )ENGINE=INNODB;
 
-INSERT INTO `persons`(`firstname`,`lastname`,`birthdate`,`sex`,`nationality`,`height`,`hairColor`,`weight`, `placeOfMissing`, `countryOfMissing`, `comments`)
-	VALUES('John','Smith',NOW(),1,'Mexican',1.68,'Black',68.5,'Downtown','Mexico','Lorem ipsum dolor');
+INSERT INTO `persons`(`firstname`,`lastname`,`birthdate`,`sex`,`nationality`,`height`,`hairColor`,`weight`, `gpsLocation`, `comments`)
+	VALUES('John','Smith',NOW(),1,'Mexican',1.68,'Black',68.5,'120.00000;456.2329015','Lorem ipsum dolor');
 
-INSERT INTO `persons`(`firstname`,`lastname`,`birthdate`,`sex`,`nationality`,`height`,`hairColor`,`weight`, `placeOfMissing`, `countryOfMissing`, `comments`)
-	VALUES('Henry','Kissinger',NOW(),1,'French',1.78,'Gray',74.3,'Iztapalapa','Mexico','Lorem ipsum dolor');
+INSERT INTO `persons`(`firstname`,`lastname`,`birthdate`,`sex`,`nationality`,`height`,`hairColor`,`weight`, `gpsLocation`, `comments`)
+	VALUES('Henry','Kissinger',NOW(),1,'French',1.78,'Gray',74.3,'065.1245487;120.0546546','Lorem ipsum dolor');
 
 
 SELECT * FROM `persons`;
+
+DROP TABLE `userKeys`;
 
 CREATE TABLE `userKeys`(
 	`id` INT AUTO_INCREMENT,
@@ -40,6 +43,8 @@ CREATE TABLE `userKeys`(
 INSERT INTO `userKeys` (`key`) VALUES ('133243423434');
 
 SELECT * FROM `userKeys`;
+
+DROP TABLE `key_has_person`;
 
 CREATE TABLE `key_has_person`(
 	`fk_key` VARCHAR(256) NOT NULL,

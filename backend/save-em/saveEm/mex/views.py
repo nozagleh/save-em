@@ -44,7 +44,8 @@ def findFoundPersons(found):
 def addPerson(request):
 	response = "none"
 	values = request.GET
-	person = Person(request.GET)
+	person = Person()
+	person.addPerson(request.GET)
 	for value in values:
 		person.addField(value)
 

@@ -20,7 +20,7 @@ class Person:
 		field = self.fields.get(fieldname)
 		if (fieldname == 'pkey'):
 			self.pkey = field
-		else:
+		elif (fieldname != 'id'):
 			setattr(self.person, fieldname, field)
 
 	def save(self):

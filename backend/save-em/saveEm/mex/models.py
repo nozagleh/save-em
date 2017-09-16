@@ -149,11 +149,10 @@ class Persons(models.Model):
     height = models.FloatField(blank=True, null=True)
     haircolor = models.CharField(db_column='hairColor', max_length=24, blank=True, null=True)  # Field name made lowercase.
     weight = models.FloatField(blank=True, null=True)
-    timeofmissing = models.DateTimeField(db_column='timeOfMissing', blank=True, null=True)  # Field name made lowercase.
-    placeofmissing = models.CharField(db_column='placeOfMissing', max_length=128, blank=True, null=True)  # Field name made lowercase.
-    countryofmissing = models.CharField(db_column='countryOfMissing', max_length=128, blank=True, null=True)  # Field name made lowercase.
+    gpslocation = models.CharField(db_column='gpsLocation', max_length=128)
     found = models.IntegerField(blank=True, null=True)
     comments = models.TextField(blank=True, null=True)
+    missingdate = models.DateTimeField(db_column='missingDate', blank=True, null=True)
 
     class Meta:
         managed = False
