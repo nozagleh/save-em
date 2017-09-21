@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -17,13 +19,32 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.nozagleh.captainmexico.ToolBox;
 
+import static com.nozagleh.captainmexico.ToolBox.*;
+
 public class AddPerson extends AppCompatActivity {
+
+    private static final String UPLOAD_ROOT = "http://10.0.2.2:8000/mex/img/";
 
     private final String TAG = "AddPerson";
 
@@ -40,6 +61,7 @@ public class AddPerson extends AppCompatActivity {
             txtHeight, txtHairColor, txtWeight;
 
     private FirebaseManager fbm;
+    private File imgFile;
 
     Uri imageUri;
 
@@ -108,8 +130,9 @@ public class AddPerson extends AppCompatActivity {
     private void launchGalleryCamera() {
         // Start the gallery picker
         Intent pickPhoto = new Intent(Intent.ACTION_PICK,
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(pickPhoto , 1);//one can be replaced with any action code
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        pickPhoto.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+        startActivityForResult(pickPhoto, 1);//one can be replaced with any action code
     }
 
     /**
@@ -120,18 +143,27 @@ public class AddPerson extends AppCompatActivity {
         // If is granted
         if ( gpsGranted ) {
 
+            SimpleDateFormat birthdateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+
             Person person = new Person();
-            person.set_ID(ToolBox.randomString());
 
             person.setFirstName(txtFirstName.getText().toString());
             person.setLastName(txtLastName.getText().toString());
-            //person.setBirthdate();
+
+            /*if (txtBirthday.length() > 0) {
+                try {
+                    person.setBirthdate(birthdateFormat.parse(txtBirthday.getText().toString()));
+                } catch (Exception e) {
+                    Log.d(TAG, e.getMessage());
+                }
+            }*/
+
             person.setNationality(txtNationality.getText().toString());
             person.setHeight(Double.valueOf(txtHeight.getText().toString()));
             person.setHairColor(txtHairColor.getText().toString());
             person.setWeight(Double.valueOf(txtWeight.getText().toString()));
 
-            person.setGender(spinnerSex.getSelectedItem().toString());
+            person.setGender(spinnerSex.getSelectedItemPosition());
 
             // Get the current location
             String loc = "";
@@ -141,23 +173,65 @@ public class AddPerson extends AppCompatActivity {
                 loc += "," + String.valueOf(location.getLongitude());
             }
 
-            Log.d(TAG, "blarhe");
-            Log.d(TAG, loc);
-
             // Set the persons location
             if ( loc.length() > 0 )
                 person.setGpsLocation(loc);
 
+            UrlBuilder urlBuilder = new UrlBuilder();
+            urlBuilder.addPath("mex/person/add/");
+            urlBuilder.addField("firstname", person.getFirstName());
+            urlBuilder.addField("lastname", person.getLastName());
+
+            urlBuilder.addField("birthdate", "1970-01-01");
+            //urlBuilder.addField("birthdate", birthdateFormat.format(person.getBirthdate()));
+
+            urlBuilder.addField("sex", person.getGender().toString());
+            urlBuilder.addField("nationality", person.getNationality());
+            urlBuilder.addField("height", person.getHeight().toString());
+            urlBuilder.addField("haircolor", person.getHairColor());
+            urlBuilder.addField("weight", person.getWeight().toString());
+            urlBuilder.addField("gpslocation", person.getGpsLocation());
+            urlBuilder.addField("found", person.getFound().toString());
+            urlBuilder.addField("comments", person.getExtraFeatures());
+
+            // TODO get some unique key for the device
+            urlBuilder.addField("pkey", "133243423434");
+
+            Log.d(TAG, urlBuilder.getUrl());
+            String url = urlBuilder.getUrl();
+
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    try {
+                        Log.d(TAG, response.getString("id"));
+                    } catch (JSONException e) {
+                        Log.d(TAG, e.getMessage());
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+
+                }
+            });
+
+            ToolBox.queue.add(jsonObjectRequest);
+
             if (imageUri != null) {
-                fbm.addPersonsImage(imageUri, person);
-                person.hasImage(true);
+                UploadImageTask asyncTask = new UploadImageTask();
+                asyncTask.setImgFile(imgFile);
+                asyncTask.setPersonId(1);
+                try {
+                    URL uploadImageUrl = new URL(UPLOAD_ROOT);
+                    //asyncTask.execute(uploadImageUrl);
+                } catch (MalformedURLException e) {
+                    Log.d(TAG, e.getMessage());
+                }
             }
 
-            // Add the new person
-            fbm.addNewPerson(person);
-
             // On success, call function to end the activity
-            endCurrentActivity();
+            //endCurrentActivity();
         } else {
             gpsSnackBar();
         }
@@ -219,9 +293,11 @@ public class AddPerson extends AppCompatActivity {
                 if(resultCode == RESULT_OK){
                     // Get the image
                     Uri selectedImage = data.getData();
+
                     // Set the image button's image to the image
                     imageButton.setImageURI(selectedImage);
 
+                    imgFile = getFile(getApplicationContext(), data);
                     imageUri = selectedImage;
                 }
         }

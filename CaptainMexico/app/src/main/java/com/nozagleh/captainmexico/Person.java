@@ -17,7 +17,7 @@ public class Person {
     private String firstName;
     private String lastName;
     private Date birthdate;
-    private String gender;
+    private Integer gender;
     private Double weight;
     private String hairColor;
     private Double height;
@@ -28,6 +28,7 @@ public class Person {
     private Integer found;
     private String userID;
     private Boolean hasImage;
+    private String imgUrl;
 
     /**
      * Empty default class constructor
@@ -81,15 +82,21 @@ public class Person {
      * Get the person's gender
      * @return String gender
      */
-    public String getGender() {
+    public Integer getGender() {
         return gender;
+    }
+
+    public String getGenderString() {
+        if (this.gender == 0)
+            return "Male";
+        return "Female";
     }
 
     /**
      * Set the person's gender
      * @param gender String gender
      */
-    public void setGender(String gender) {
+    public void setGender(Integer gender) {
         this.gender = gender;
     }
 
@@ -219,5 +226,13 @@ public class Person {
 
     public void hasImage(Boolean flag) {
         this.hasImage = flag;
+    }
+
+    public String getImgUrl() {
+        return imgUrl;
+    }
+
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
     }
 }

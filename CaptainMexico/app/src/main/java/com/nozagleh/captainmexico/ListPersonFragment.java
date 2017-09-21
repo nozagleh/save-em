@@ -132,7 +132,8 @@ public class ListPersonFragment extends Fragment {
 
     private void fetchList() {
         RequestQueue queue = Volley.newRequestQueue(this.getContext());
-        String url = "http://192.168.1.139:8000/mex/persons/";
+        String url = "http://10.0.2.2:8000/mex/persons/";
+        //String url = "http://192.168.1.139:8000/mex/persons/";
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                 (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                     @Override
@@ -153,7 +154,10 @@ public class ListPersonFragment extends Fragment {
                                 person.set_ID(personData.getString("id"));
                                 person.setFirstName(personData.getString("firstname"));
                                 person.setLastName(personData.getString("lastname"));
-                                person.setGender(personData.getString("gender"));
+                                person.setGender(personData.getInt("gender"));
+
+                                if (personData.has("img_url"))
+                                    person.setImgUrl(personData.getString("img_url"));
 
                                 DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
                                 String date = personData.getString("birthday");

@@ -61,6 +61,9 @@ public class MainNaviDraw extends AppCompatActivity
         // Start the tracking
         GPSManager gps = new GPSManager(this);
         gps.startLocationTracking();
+
+        //Init the request queue
+        ToolBox.initQueue(getApplicationContext());
     }
 
     @Override
