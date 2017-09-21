@@ -2,6 +2,9 @@
 from __future__ import unicode_literals
 
 from django.shortcuts import render, Http404
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
+
 
 # Create your views here.
 
@@ -9,7 +12,7 @@ import json
 
 from django.http import HttpResponse, JsonResponse, HttpRequest
 
-from .models import Persons
+from .models import Persons, PersonImages
 
 from Classes.json import GenerateJSON
 from Classes.Person import Person
@@ -25,7 +28,7 @@ def person(request, personId):
 	except Persons.DoesNotExist:
 		raise Http404("Person does not exist")
 
-	return JsonResponse(data.getPersonJSON(person))
+	return JsonResponse(data.getPersonJSON(person, False))
 
 def persons(request):
 	persons = Persons.objects.all()
@@ -50,5 +53,21 @@ def addPerson(request):
 		person.addField(value)
 
 	person.save()
-	return HttpResponse(response)
-	#return HttpResponse(request.POST.getlist('name', 'asdas'))
+	return JsonResponse(data.getPersonJSON(person, True))
+
+def addImage(request):
+	print request.POST['person_id']
+	writeFile(request.FILES['uploaded_file'], request.POST['person_id'])
+	return HttpResponse("ok")
+
+def writeFile(f, personId):
+	person = Persons.objects.get(id=personId)
+	
+	img = PersonImages(image=f)
+	img.person_id = person.id
+	try:
+		img.save()
+	except Exception as e:
+		raise e
+
+	return HttpResponse("ok")

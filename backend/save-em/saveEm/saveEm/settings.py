@@ -30,6 +30,7 @@ ALLOWED_HOSTS = [
     '192.168.1.139',
     'localhost',
     '127.0.0.1',
+    '10.0.2.2',
 ]
 
 
@@ -85,7 +86,7 @@ WSGI_APPLICATION = 'saveEm.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'save-em',
+        'NAME': 'mex',
         'USER': 'arnar',
         'PASSWORD': '2910afh93',
         'HOST': '127.0.0.1'
@@ -130,3 +131,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

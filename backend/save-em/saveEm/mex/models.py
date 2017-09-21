@@ -7,6 +7,8 @@
 # Feel free to rename the models, but don't rename db_table values or field names.
 from __future__ import unicode_literals
 
+import os
+import datetime
 from django.core import serializers
 from django.db import models
 
@@ -120,55 +122,44 @@ class DjangoSession(models.Model):
         managed = False
         db_table = 'django_session'
 
-
-class KeyHasPerson(models.Model):
-    fk_key = models.ForeignKey('Userkeys', models.DO_NOTHING, db_column='fk_key')
-    fk_person = models.ForeignKey('Persons', models.DO_NOTHING, db_column='fk_person')
+class Persons(models.Model):
+    firstname = models.CharField(max_length=64)
+    lastname = models.CharField(max_length=128)
+    birthdate = models.DateField(blank=True, null=True)
+    sex = models.IntegerField()
+    nationality = models.CharField(max_length=128)
+    height = models.FloatField(blank=True, null=True)
+    haircolor = models.CharField(max_length=24, blank=True, null=True)
+    weight = models.FloatField(blank=True, null=True)
+    gpslocation = models.CharField(max_length=128)
+    found = models.IntegerField(blank=True, null=True)
+    comments = models.TextField(blank=True, null=True)
+    missingdate = models.DateTimeField(default=datetime.date.today)
 
     class Meta:
-        managed = False
-        db_table = 'key_has_person'
-        unique_together = (('fk_key', 'fk_person'),)
+        managed = True
+        db_table = 'mex_persons'
+
+    def getPersonJSON(self):
+     	return self
+
+class Userkeys(models.Model):
+    key = models.CharField(unique=True, max_length=255, primary_key=True)
+    dateofregistration = models.DateTimeField(blank=True, null=True)  # Field name made lowercase.
+
+def getImagePath(instance, filename):
+    return os.path.join('images', str(instance.id), filename)
+
+class PersonImages(models.Model):
+    person = models.ForeignKey(Persons, models.DO_NOTHING)
+    image = models.ImageField(upload_to=getImagePath, blank=True, null=True)
+
+class KeyHasPerson(models.Model):
+    fk_key = models.ForeignKey(Userkeys, models.DO_NOTHING, null=True)
+    fk_person = models.ForeignKey(Persons, models.DO_NOTHING, null=True)
 
 
 class PersonLog(models.Model):
     date = models.DateTimeField(blank=True, null=True)
     operation = models.CharField(max_length=64, blank=True, null=True)
-    fk_key = models.ForeignKey('Userkeys', models.DO_NOTHING, db_column='fk_key')
-
-    class Meta:
-        managed = False
-        db_table = 'person_log'
-
-class Persons(models.Model):
-    firstname = models.CharField(max_length=64)
-    lastname = models.CharField(max_length=128)
-    birthdate = models.DateField()
-    sex = models.IntegerField()
-    nationality = models.CharField(max_length=128)
-    height = models.FloatField(blank=True, null=True)
-    haircolor = models.CharField(db_column='hairColor', max_length=24, blank=True, null=True)  # Field name made lowercase.
-    weight = models.FloatField(blank=True, null=True)
-    gpslocation = models.CharField(db_column='gpsLocation', max_length=128)
-    found = models.IntegerField(blank=True, null=True)
-    comments = models.TextField(blank=True, null=True)
-    missingdate = models.DateTimeField(db_column='missingDate', blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'persons'
-
-    def getPersonJSON(self):
-     	return self
-
-    def __str__(self):
-        return self.firstname
-
-
-class Userkeys(models.Model):
-    key = models.CharField(unique=True, max_length=255, primary_key=True)
-    dateofregistration = models.DateTimeField(db_column='dateOfRegistration', blank=True, null=True)  # Field name made lowercase.
-
-    class Meta:
-        managed = False
-        db_table = 'userKeys'
+    fk_key = models.ForeignKey(Userkeys, models.DO_NOTHING, null=True)
