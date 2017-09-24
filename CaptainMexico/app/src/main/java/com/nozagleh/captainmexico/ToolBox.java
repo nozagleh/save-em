@@ -42,11 +42,6 @@ public class ToolBox {
 
     public static RequestQueue queue;
 
-    //public static final String UPLOAD_ROOT = "http://192.168.1.139:8000/mex/img";
-    public static final String FIREBASE_ROOT = "https://firebasestorage.googleapis.com/v0/b/lostinmex-31d91.appspot.com/o/person-images%%%1$s.jpg?alt=media";
-
-    public static FirebaseManager firebaseManager = new FirebaseManager();
-
     public static String randomString() {
         return UUID.randomUUID().toString();
     }

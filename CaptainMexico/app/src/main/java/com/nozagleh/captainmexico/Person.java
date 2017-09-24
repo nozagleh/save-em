@@ -1,17 +1,12 @@
 package com.nozagleh.captainmexico;
 
-import android.icu.util.Calendar;
+import android.graphics.Bitmap;
 
-import com.google.firebase.database.IgnoreExtraProperties;
-
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
  * Created by arnar on 2017-08-29.
  */
-
-@IgnoreExtraProperties
 public class Person {
     private String ID;
     private String firstName;
@@ -28,6 +23,7 @@ public class Person {
     private Integer found;
     private String userID;
     private Boolean hasImage;
+    private Bitmap img;
     private String imgUrl;
 
     /**
@@ -226,6 +222,15 @@ public class Person {
 
     public void hasImage(Boolean flag) {
         this.hasImage = flag;
+    }
+
+    public Bitmap getImg() {
+        return img;
+    }
+
+    public void setImg(Bitmap img) {
+        this.hasImage(true);
+        this.img = img;
     }
 
     public String getImgUrl() {

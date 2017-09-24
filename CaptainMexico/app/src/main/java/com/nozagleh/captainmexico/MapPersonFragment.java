@@ -1,12 +1,32 @@
 package com.nozagleh.captainmexico;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
-import android.net.Uri;
+import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import android.support.v4.app.FragmentActivity;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+
+import java.util.ArrayList;
 
 
 /**
@@ -14,64 +34,70 @@ import android.view.ViewGroup;
  * Activities that contain this fragment must implement the
  * {@link FragmentListener} interface
  * to handle interaction events.
- * Use the {@link MapPersonFragment#newInstance} factory method to
- * create an instance of this fragment.
  */
-public class MapPersonFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+public class MapPersonFragment extends Fragment
+        implements OnMapReadyCallback {
+    private static final String TAG = "MapPersonFragment";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private View view;
 
     private FragmentListener mListener;
+
+    private GoogleMap googleMap;
+    //private MapView map;
+    private SupportMapFragment map;
+
+    private PermissionManager pm;
+    private GPSManager gps;
+    private Boolean gpsGranted;
+
+    private ArrayList<Person> persons;
+
+    private FusedLocationProviderClient mFusedLocationProviderClient;
 
     public MapPersonFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment MapPersonFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static MapPersonFragment newInstance(String param1, String param2) {
-        MapPersonFragment fragment = new MapPersonFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+
+        persons = new ArrayList<>();
+        mListener.updateList();
+        persons = mListener.getPersons();
+
+        // Set new Permission manager
+        pm = new PermissionManager();
+
+        // Set new GPS manager
+        gps = new GPSManager(getContext());
+
+        // Check if gps permission is granted
+        gpsGranted = pm.gpsPermission(this.getActivity());
+
+        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_map_person, container, false);
-    }
+        view = inflater.inflate(R.layout.fragment_map_person, container, false);
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            // call listener
-        }
+        //map = view.findViewById(R.id.missingMap);
+        map = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        map.onCreate(savedInstanceState);
+        map.getMapAsync(this);
+
+        Log.d(TAG, "lol");
+
+        // Inflate the layout for this fragment
+        return view;
     }
 
     @Override
@@ -89,5 +115,49 @@ public class MapPersonFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onMapReady(final GoogleMap googleMap) {
+        this.googleMap = googleMap;
+        this.googleMap.getUiSettings().setScrollGesturesEnabled(true);
+        this.googleMap.getUiSettings().setMyLocationButtonEnabled(true);
+        this.googleMap.getUiSettings().setZoomControlsEnabled(true);
+
+        try {
+            if (gpsGranted) {
+                mFusedLocationProviderClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        if (location != null) {
+                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                                    new LatLng(location.getLatitude(),
+                                            location.getLongitude()), 15));
+                        } else {
+
+                        }
+                    }
+                });
+            }
+        } catch (SecurityException e) {
+            Log.e(TAG, e.getMessage());
+        }
+
+        addMarkers();
+    }
+
+    public void addMarkers() {
+        persons = mListener.getPersons();
+        if (googleMap == null || persons.isEmpty())
+            return;
+        for (Person person:persons) {
+            if (person.getGpsLocation() != null) {
+                String gpsLocation = person.getGpsLocation();
+                String[] latLng = gpsLocation.split(",");
+
+                LatLng personLoc = new LatLng(Double.valueOf(latLng[0]), Double.valueOf(latLng[1]));
+                googleMap.addMarker(new MarkerOptions().position(personLoc).title(person.getFirstName() + " " + person.getLastName()));
+            }
+        }
     }
 }

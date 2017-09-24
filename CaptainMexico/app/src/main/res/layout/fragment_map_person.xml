@@ -5,9 +5,17 @@
     tools:context="com.nozagleh.captainmexico.MapPersonFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
 
+    <fragment
+        android:id="@+id/map"
+        class="com.google.android.gms.maps.SupportMapFragment"
+        xmlns:map="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/missingMap"
+        android:clickable="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </FrameLayout>

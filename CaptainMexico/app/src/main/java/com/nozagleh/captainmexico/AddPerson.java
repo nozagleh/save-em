@@ -59,8 +59,6 @@ public class AddPerson extends AppCompatActivity {
     private Button btnSubmit;
     private EditText txtFirstName, txtLastName, txtBirthday, txtNationality,
             txtHeight, txtHairColor, txtWeight;
-
-    private FirebaseManager fbm;
     private File imgFile;
 
     Uri imageUri;
@@ -75,9 +73,6 @@ public class AddPerson extends AppCompatActivity {
         // Show action bar to go back a step
         if (actionBar != null)
             actionBar.setDisplayHomeAsUpEnabled(true);
-
-        // Get the app global firebase manager
-        fbm = ToolBox.firebaseManager;
 
         // Set new Permission manager
         pm = new PermissionManager();
@@ -205,6 +200,17 @@ public class AddPerson extends AppCompatActivity {
                 public void onResponse(JSONObject response) {
                     try {
                         Log.d(TAG, response.getString("id"));
+                        if (imageUri != null) {
+                            UploadImageTask asyncTask = new UploadImageTask();
+                            asyncTask.setImgFile(imgFile);
+                            asyncTask.setPersonId(Integer.valueOf(response.getString("id")));
+                            try {
+                                URL uploadImageUrl = new URL(UPLOAD_ROOT);
+                                asyncTask.execute(uploadImageUrl);
+                            } catch (MalformedURLException e) {
+                                Log.d(TAG, e.getMessage());
+                            }
+                        }
                     } catch (JSONException e) {
                         Log.d(TAG, e.getMessage());
                     }
@@ -217,18 +223,6 @@ public class AddPerson extends AppCompatActivity {
             });
 
             ToolBox.queue.add(jsonObjectRequest);
-
-            if (imageUri != null) {
-                UploadImageTask asyncTask = new UploadImageTask();
-                asyncTask.setImgFile(imgFile);
-                asyncTask.setPersonId(1);
-                try {
-                    URL uploadImageUrl = new URL(UPLOAD_ROOT);
-                    //asyncTask.execute(uploadImageUrl);
-                } catch (MalformedURLException e) {
-                    Log.d(TAG, e.getMessage());
-                }
-            }
 
             // On success, call function to end the activity
             //endCurrentActivity();
