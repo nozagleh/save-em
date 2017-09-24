@@ -28,7 +28,7 @@ def person(request, personId):
 	except Persons.DoesNotExist:
 		raise Http404("Person does not exist")
 
-	return JsonResponse(data.getPersonJSON(person, False))
+	return JsonResponse(data.getPersonJSON(person, False, 0))
 
 def persons(request):
 	persons = Persons.objects.all()
@@ -53,7 +53,8 @@ def addPerson(request):
 		person.addField(value)
 
 	person.save()
-	return JsonResponse(data.getPersonJSON(person, True))
+	pId = person.getId()
+	return JsonResponse(data.getPersonJSON(person, True, pId))
 
 def addImage(request):
 	print request.POST['person_id']

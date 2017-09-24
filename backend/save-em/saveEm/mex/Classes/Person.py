@@ -36,3 +36,6 @@ class Person:
 		self.userKey.fk_key = self.user
 		self.userKey.fk_person = self.person
 		self.userKey.save()
+
+	def getId(self):
+		return self.person.id
